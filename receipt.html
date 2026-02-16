@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kuda Transaction Receipt</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Mulish:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+    <style>
+        :root {
+            --kuda-purple: #40196d;
+            --text-dark: #000000;
+            --text-gray: #8e8e8e;
+            --line-gray: #f4f4f4;
+            --bg-white: #ffffff;
+            --banner-bg: #eff1ff;
+        }
+
+        body {
+            background-color: #e0e0e0;
+            font-family: 'Mulish', sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+        }
+
+        /* The Receipt Container */
+        .receipt-container {
+            width: 100%;
+            max-width: 480px;
+            background-color: var(--bg-white);
+            padding: 40px 30px;
+            box-sizing: border-box;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            position: relative;
+        }
+
+        /* Header */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 40px;
+        }
+
+        .logo-container svg {
+            height: 32px;
+            width: auto;
+        }
+
+        .receipt-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text-dark);
+        }
+
+        /* Main Amount Section */
+        .amount-section {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .amount-label {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-dark);
+            margin-bottom: 8px;
+        }
+
+        .amount-value {
+            font-size: 32px;
+            font-weight: 900;
+            color: var(--text-dark);
+        }
+
+        /* List Items */
+        .details-list {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 16px 0;
+            border-bottom: 1px solid var(--line-gray);
+            font-size: 14px;
+        }
+
+        .detail-row:last-of-type {
+            border-bottom: 2px solid #e5e5e5;
+        }
+
+        .label {
+            color: #bdbdbd;
+            font-weight: 400;
+            flex: 1;
+        }
+
+        .value {
+            color: var(--text-dark);
+            font-weight: 600;
+            text-align: right;
+            flex: 1.5;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .sub-value {
+            color: #bdbdbd;
+            font-size: 12px;
+            font-weight: 400;
+        }
+
+        /* Banner */
+        .promo-banner {
+            margin-top: 40px;
+            background-color: var(--banner-bg);
+            border-radius: 12px;
+            padding: 15px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .promo-icon {
+            background-color: var(--kuda-purple);
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 900;
+            font-size: 18px;
+            flex-shrink: 0;
+        }
+
+        .promo-text {
+            color: var(--kuda-purple);
+            font-size: 13px;
+            font-weight: 800;
+            line-height: 1.4;
+        }
+
+        /* Footer */
+        .footer {
+            margin-top: 30px;
+            text-align: center;
+            color: #cccccc;
+            font-size: 10px;
+            line-height: 1.5;
+        }
+
+        /* Editable visual cue */
+        [contenteditable]:hover {
+            background-color: rgba(255, 255, 0, 0.1);
+            outline: 1px dashed #ccc;
+            cursor: text;
+        }
+
+        [contenteditable]:focus {
+            outline: 2px solid var(--kuda-purple);
+            background-color: transparent;
+        }
+
+        /* Controls */
+        .controls {
+            margin-top: 20px;
+        }
+
+        .btn {
+            background-color: var(--kuda-purple);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            font-family: 'Mulish', sans-serif;
+            box-shadow: 0 4px 12px rgba(64, 25, 109, 0.3);
+            transition: transform 0.1s;
+        }
+
+        .btn:active {
+            transform: scale(0.98);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="receipt-container" id="receipt">
+        <div class="header">
+            <div class="logo-container">
+                <img src="kuda-technologies-ltd-vector-logo.png" style="height: 40px;">
+            </div>
+            <div class="receipt-title" contenteditable="true">Transaction Details</div>
+        </div>
+
+        <div class="amount-section">
+            <div class="amount-label" contenteditable="true">Transaction Amount</div>
+            <div class="amount-value" contenteditable="true">₦500.00</div>
+        </div>
+
+        <div class="details-list">
+            
+            <div class="detail-row">
+                <div class="label" contenteditable="true">Beneficiary Details</div>
+                <div class="value">
+                    <span contenteditable="true">Chinwendu-Chukwunenye Gerrard Agwu</span>
+                    <span class="sub-value" contenteditable="true">Opay Digital Services Limited | 8087884841</span>
+                </div>
+            </div>
+
+            <div class="detail-row">
+                <div class="label" contenteditable="true">Sender Details</div>
+                <div class="value">
+                    <span contenteditable="true">Chinwedu Agwu</span>
+                    <span class="sub-value" contenteditable="true">Kuda | 2002180078</span>
+                </div>
+            </div>
+
+            <div class="detail-row">
+                <div class="label" contenteditable="true">Paid On</div>
+                <div class="value">
+                    <span contenteditable="true">Feb 16, 2026</span>
+                    <span class="sub-value" contenteditable="true">3:24 PM</span>
+                </div>
+            </div>
+
+            <div class="detail-row">
+                <div class="label" contenteditable="true">Fees</div>
+                <div class="value" contenteditable="true">₦10.75</div>
+            </div>
+
+            <div class="detail-row">
+                <div class="label" contenteditable="true">Description</div>
+                <div class="value" contenteditable="true">yea</div>
+            </div>
+
+            <div class="detail-row">
+                <div class="label" contenteditable="true">Transaction Reference</div>
+                <div class="value" contenteditable="true">090267260216142410200002180078</div>
+            </div>
+
+            <div class="detail-row">
+                <div class="label" contenteditable="true">Payment Type</div>
+                <div class="value" contenteditable="true">Outward Transfer</div>
+            </div>
+
+        </div>
+
+        <div class="promo-banner">
+            <div class="promo-icon">K.</div>
+            <div class="promo-text" contenteditable="true">Not on Kuda? Tap here to download the money app for Africans</div>
+        </div>
+
+        <div class="footer" contenteditable="true">
+            &copy; 2026 Kuda Technologies Ltd (Company No. 11472232). All rights reserved.<br>
+            If you would like to find out more about which Kuda entity you receive services from, please reach out to us via the in-app chat in the Kuda app.<br>
+            Nigerian banking services offered by Kuda Microfinance Bank (RC796975) with registered address at 1-11 Commercial avenue, Yaba, Lagos, Nigeria.. Kuda Microfinance Bank is licensed by the Central Bank of Nigeria. Deposits are insured by the Nigerian Deposit Insurance Corporation (NDIC).
+        </div>
+
+    </div>
+
+    <div class="controls">
+        <button class="btn" onclick="downloadReceipt()">Download Receipt</button>
+    </div>
+
+    <script>
+        function downloadReceipt() {
+            const receipt = document.getElementById('receipt');
+            
+            // Temporarily remove outlines/hover effects for the screenshot
+            const editables = document.querySelectorAll('[contenteditable]');
+            editables.forEach(el => el.blur());
+
+            html2canvas(receipt, {
+                scale: 2, // High resolution
+                backgroundColor: "#ffffff",
+                useCORS: true
+            }).then(canvas => {
+                const link = document.createElement('a');
+                link.download = 'Kuda_Transaction_Receipt.png';
+                link.href = canvas.toDataURL('image/png');
+                link.click();
+            });
+        }
+    </script>
+</body>
+</html>

@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=1024">
     <title>Kuda Transaction Receipt</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -19,6 +19,11 @@
             --banner-bg: #eff1ff;
         }
 
+        /* Force desktop layout — never shrink below 520px */
+        html {
+            min-width: 520px;
+        }
+
         body {
             background-color: #e0e0e0;
             font-family: 'Mulish', sans-serif;
@@ -29,11 +34,13 @@
             min-height: 100vh;
             margin: 0;
             padding: 20px;
+            box-sizing: border-box;
         }
 
-        /* The Receipt Container */
+        /* The Receipt Container — fixed, never fluid */
         .receipt-container {
-            width: 100%;
+            width: 480px;
+            min-width: 480px;
             max-width: 480px;
             background-color: var(--bg-white);
             padding: 40px 30px;
@@ -233,8 +240,8 @@
             <div class="detail-row">
                 <div class="label" contenteditable="true">Paid On</div>
                 <div class="value">
-                    <span contenteditable="true">Feb 16, 2026</span>
-                    <span class="sub-value" contenteditable="true">3:24 PM</span>
+                    <span id="wat-date" contenteditable="true"></span>
+                    <span id="wat-time" class="sub-value" contenteditable="true"></span>
                 </div>
             </div>
 
@@ -278,15 +285,46 @@
     </div>
 
     <script>
+        // ── Nigerian Time (WAT = UTC+1) ──────────────────────────────────
+        function getNigerianDateTime() {
+            // WAT is UTC+1, no daylight saving
+            const now = new Date();
+            const watOffset = 1 * 60; // minutes
+            const utcMs = now.getTime() + now.getTimezoneOffset() * 60000;
+            const watDate = new Date(utcMs + watOffset * 60000);
+
+            const months = [
+                'Jan','Feb','Mar','Apr','May','Jun',
+                'Jul','Aug','Sep','Oct','Nov','Dec'
+            ];
+
+            const day   = watDate.getDate();
+            const month = months[watDate.getMonth()];
+            const year  = watDate.getFullYear();
+
+            let hours   = watDate.getHours();
+            const mins  = String(watDate.getMinutes()).padStart(2, '0');
+            const ampm  = hours >= 12 ? 'PM' : 'AM';
+            hours = hours % 12 || 12;
+
+            return {
+                date: `${month} ${day}, ${year}`,
+                time: `${hours}:${mins} ${ampm}`
+            };
+        }
+
+        const wat = getNigerianDateTime();
+        document.getElementById('wat-date').textContent = wat.date;
+        document.getElementById('wat-time').textContent = wat.time;
+        // ────────────────────────────────────────────────────────────────
+
         function downloadReceipt() {
             const receipt = document.getElementById('receipt');
-            
-            // Temporarily remove outlines/hover effects for the screenshot
             const editables = document.querySelectorAll('[contenteditable]');
             editables.forEach(el => el.blur());
 
             html2canvas(receipt, {
-                scale: 2, // High resolution
+                scale: 2,
                 backgroundColor: "#ffffff",
                 useCORS: true
             }).then(canvas => {
@@ -298,5 +336,4 @@
         }
     </script>
 </body>
-
 </html>
